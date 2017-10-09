@@ -30,8 +30,8 @@ Kernel configured for up to 4 processors.
 Processor type: i486 (Intel 80486)
 Processors active: 0 1 2 3
 Primary memory available: 4.00 gigabytes
-Default processor set: 266 tasks, 1130 threads, 4 processors
-Load average: 3.27, Mach factor: 1.96
+Default processor set: 194 tasks, 1093 threads, 4 processors
+Load average: 2.19, Mach factor: 1.92
 /bin/machine           = unknown
 /usr/bin/oslevel       = unknown
 /bin/universe          = unknown
@@ -237,7 +237,7 @@ configure:5494: checking the name lister (/usr/bin/nm -B) interface
 configure:5501: g++ -c -g -O2  conftest.cpp >&5
 configure:5504: /usr/bin/nm -B "conftest.o"
 configure:5507: output
-0000000000000188 S _some_variable
+0000000000000190 S _some_variable
 configure:5514: result: BSD nm
 configure:5517: checking whether ln -s works
 configure:5521: result: yes
@@ -2365,6 +2365,7 @@ config.status:1221: creating src/glog/vlog_is_on.h
 config.status:1221: creating src/glog/stl_logging.h
 config.status:1221: creating libglog.pc
 config.status:1221: creating src/config.h
+config.status:1402: src/config.h is unchanged
 config.status:1450: executing depfiles commands
 config.status:1450: executing libtool commands
 
@@ -2518,15 +2519,15 @@ lt_cv_to_tool_file_cmd=func_convert_file_noop
 ## Output variables. ##
 ## ----------------- ##
 
-ACLOCAL='${SHELL} /Users/a13506/ninefx/glog-0.3.3/missing --run aclocal-1.11'
+ACLOCAL='${SHELL} /Users/a13506/fxdev/ninefx/glog-0.3.3/missing --run aclocal-1.11'
 AMDEPBACKSLASH='\'
 AMDEP_FALSE='#'
 AMDEP_TRUE=''
 AMTAR='$${TAR-tar}'
 AR='ar'
-AUTOCONF='${SHELL} /Users/a13506/ninefx/glog-0.3.3/missing --run autoconf'
-AUTOHEADER='${SHELL} /Users/a13506/ninefx/glog-0.3.3/missing --run autoheader'
-AUTOMAKE='${SHELL} /Users/a13506/ninefx/glog-0.3.3/missing --run automake-1.11'
+AUTOCONF='${SHELL} /Users/a13506/fxdev/ninefx/glog-0.3.3/missing --run autoconf'
+AUTOHEADER='${SHELL} /Users/a13506/fxdev/ninefx/glog-0.3.3/missing --run autoheader'
+AUTOMAKE='${SHELL} /Users/a13506/fxdev/ninefx/glog-0.3.3/missing --run automake-1.11'
 AWK='awk'
 CC='gcc'
 CCDEPMODE='depmode=gcc3'
@@ -2579,7 +2580,7 @@ LIBTOOL_DEPS='./ltmain.sh'
 LIPO='lipo'
 LN_S='ln -s'
 LTLIBOBJS=''
-MAKEINFO='${SHELL} /Users/a13506/ninefx/glog-0.3.3/missing --run makeinfo'
+MAKEINFO='${SHELL} /Users/a13506/fxdev/ninefx/glog-0.3.3/missing --run makeinfo'
 MANIFEST_TOOL=':'
 MKDIR_P='./install-sh -c -d'
 NM='/usr/bin/nm -B'
@@ -2661,7 +2662,7 @@ host_vendor='apple'
 htmldir='${docdir}'
 includedir='${prefix}/include'
 infodir='${datarootdir}/info'
-install_sh='${SHELL} /Users/a13506/ninefx/glog-0.3.3/install-sh'
+install_sh='${SHELL} /Users/a13506/fxdev/ninefx/glog-0.3.3/install-sh'
 libdir='${exec_prefix}/lib'
 libexecdir='${exec_prefix}/libexec'
 localedir='${datarootdir}/locale'
