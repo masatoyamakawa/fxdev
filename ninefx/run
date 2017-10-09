@@ -1,0 +1,100 @@
+#!/bin/bash
+# Run the FX prediction command with flags.
+
+source "$(dirname "${BASH_SOURCE}")/imosh" || exit 1
+
+DEFINE_bool 'release' false 'Build as a release binary.'
+DEFINE_bool 'evaluate' false 'Evaluates the current model.'
+DEFINE_bool 'qlearn' false 'Learn QFeatures.'
+DEFINE_int 'num_threads' 8 'Number of threads.'
+DEFINE_enum --values='CLOSE,CROSS,LIMIT' 'future' 'LIMIT' \
+    'Definition of future.'
+DEFINE_enum --values='FLAT,SQRT,LINEAR,LINEAR_CUT' 'future_curve' 'LINEAR' \
+    'Definition of future.'
+DEFINE_bool 'daily_volatility' false 'Use daily volatility.'
+DEFINE_int 'base_volatility_interval' 1440 'Interval for base volatility.'
+DEFINE_bool 'future_variation' false 'Variation of future.'
+DEFINE_string 'spread' 0.000029 'Use spread.'
+DEFINE_int 'random_seed' -1 'Random seed.'
+DEFINE_bool 'volatility_adjustment' false 'Enable volatility adjustment.'
+DEFINE_int 'volatility_power' 1 'Power of volatility.'
+
+DEFINE_list 'training' '2011' 'Years for training.'
+DEFINE_list 'evaluation' '2012' 'Years for evaluation.'
+DEFINE_bool 'dry_run' false 'Do not run the command.'
+DEFINE_string 'currency' 'USDJPY' 'Currency.'
+DEFINE_string --group='Internal' 'target' 'main' 'Target to compile.'
+DEFINE_bool 'test' false 'Testing mode.'
+
+eval "${IMOSH_INIT}"
+
+cd "$(dirname "${BASH_SOURCE}")"
+
+CXXFLAGS=(-g3 -std=c++0x -lpthread -lglog)
+if (( FLAGS_release )); then
+  CXXFLAGS+=(-O3 -march=native -DNDEBUG)
+else
+  CXXFLAGS+=(
+      -O0
+      -Wall -Wextra -Wno-c++98-compat-pedantic -Wno-c++98-compat
+      -Wno-old-style-cast -Wno-vla-extension -Wno-vla
+      -Wno-missing-prototypes -Wno-padded)
+fi
+
+LOG INFO 'Compiling...'
+time "${CXX:-g++}" "${CXXFLAGS[@]}" -o "./bin/${FLAGS_target}" "./${FLAGS_target}.cc"
+
+export FX_NUM_THREADS="${FLAGS_num_threads}"
+if (( FLAGS_evaluate )); then
+  export FX_MODE='EVALUATE'
+fi
+if (( FLAGS_qlearn )); then
+  export FX_MODE='QLEARN'
+fi
+export FX_FUTURE="${FLAGS_future}"
+export FX_FUTURE_CURVE="${FLAGS_future_curve}"
+if (( FLAGS_alsologtostderr )); then
+  export FX_ALSOLOGTOSTDERR=1
+fi
+if (( FLAGS_daily_volatility )); then
+  export FX_DAILY_VOLATILITY=1
+fi
+export FX_BASE_VOLATILITY_INTERVAL="${FLAGS_base_volatility_interval}"
+if (( FLAGS_future_variation )); then
+  export FX_FUTURE_VARIATION="${FLAGS_future_variation}"
+fi
+export FX_SPREAD="${FLAGS_spread}"
+if (( FLAGS_random_seed < 0 )); then
+  export FX_RANDOM_SEED="$(sub::rand)"
+else
+  export FX_RANDOM_SEED="${FLAGS_random_seed}"
+fi
+if (( FLAGS_volatility_adjustment )); then
+  export FX_VOLATILITY_ADJUSTMENT=1
+fi
+export FX_VOLATILITY_POWER="${FLAGS_volatility_power}"
+
+LOG INFO 'Executing...'
+commands=("./bin/${FLAGS_target}")
+
+if (( FLAGS_test )); then
+  commands+=('TEST')
+else
+  training=()
+  for year in "${FLAGS_training[@]}"; do
+    training+=("data/${FLAGS_currency}/${year}.fxbin")
+  done
+  commands+=("$(sub::implode ',' training)")
+
+  test=()
+  for year in "${FLAGS_evaluation[@]}"; do
+    test+=("data/${FLAGS_currency}/${year}.fxbin")
+  done
+  commands+=("$(sub::implode ',' test)")
+fi
+
+env | grep '^FX_' >&2
+echo "${commands[@]}" >&2
+if (( ! FLAGS_dry_run )); then
+  time "${commands[@]}"
+fi
